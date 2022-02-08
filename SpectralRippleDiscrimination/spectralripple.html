@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Spektral Dalga Ayırt Etme Testi</title>
+        <script src="js/tools.js"></script>
+        <script src="jspsych-6.3.1/jspsych.js"></script>
+        <script src="jspsych-6.3.1/jspsych-nafc-adaptive.js"></script>
+        <script src="jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
+        <script src="jspsych-6.3.1/plugins/jspsych-waitfor-function.js"></script>
+        <script src="jspsych-6.3.1/plugins/jspsych-audio-sequence-button-response.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="jspsych-6.3.1/plugins/jspsych-preload.js"></script>
+        <link href="jspsych-6.3.1/css/jspsych.css" rel="stylesheet" type="text/css">
+    </head>
+    <style>
+        .jspsych-audio-sequence-button-response button {
+            font-size:30pt;
+        }
+        .highlighted {
+            background-color: blue !important;
+        }
+    </style>
+    <body>
+    <script>
+        var timeline = []
+    
+        var stimuli = [
+                    "audio/i_0.125_1.wav", 
+                    "audio/i_0.176_1.wav", 
+                    "audio/i_0.250_1.wav", 
+                    "audio/i_0.354_1.wav", 
+                    "audio/i_0.500_1.wav", 
+                    "audio/i_0.707_1.wav", 
+                    "audio/i_1.000_1.wav", 
+                    "audio/i_1.414_1.wav", 
+                    "audio/i_2.000_1.wav", 
+                    "audio/i_2.828_1.wav", 
+                    "audio/i_4.000_1.wav", 
+                    "audio/i_5.657_1.wav", 
+                    "audio/i_8.000_1.wav",
+                    "audio/i_11.314_1.wav",
+                    "audio/i_16.000_1.wav",
+                    "audio/i_22.628_1.wav"]
+        
+        var s_ripples = [
+                    "audio/s_0.125_1.wav", 
+                    "audio/s_0.176_1.wav", 
+                    "audio/s_0.250_1.wav", 
+                    "audio/s_0.354_1.wav", 
+                    "audio/s_0.500_1.wav", 
+                    "audio/s_0.707_1.wav", 
+                    "audio/s_1.000_1.wav", 
+                    "audio/s_1.414_1.wav", 
+                    "audio/s_2.000_1.wav", 
+                    "audio/s_2.828_1.wav", 
+                    "audio/s_4.000_1.wav", 
+                    "audio/s_5.657_1.wav", 
+                    "audio/s_8.000_1.wav",
+                    "audio/s_11.314_1.wav",
+                    "audio/s_16.000_1.wav",
+                    "audio/s_22.628_1.wav"
+        ]
+
+        function getRandomIntInclusive(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+
+        function show_error_nAFC(msg){
+            $('#jspsych-target').append("<div class='ui error message'>"+msg+"</div>");
+        }
+
+        function send_nAFC_data(options, condition, data, success_cb)
+        {
+            success_cb();
+        }
+
+        function prepare_trial(last_trial, step, options, condition, done){
+            console.log('We come in with this step: '+step);
+            var baseIndex = 0;
+            if (step != 0 & Math.abs(step) < 1)
+                step = Math.sign(step)*1;
+            var diff = options.current_difference + step;
+            var rippleIndex = diff;
+            var trial_stimuli = s_ripples[diff + baseIndex];
+            var i_correct = getRandomInt(3);
+            if(i_correct==0)
+                trial_stimuli = [trial_stimuli, stimuli[rippleIndex], stimuli[rippleIndex]];
+            else if(i_correct==1)
+                trial_stimuli = [stimuli[rippleIndex], trial_stimuli, stimuli[rippleIndex]];
+            else if(i_correct==2) 
+                trial_stimuli = [stimuli[rippleIndex], stimuli[rippleIndex], trial_stimuli];
+            var new_trial = {
+                stimuli: trial_stimuli,
+                i_correct: i_correct,
+                trial_definition: {
+                    dim: diff,
+                    condition: condition,
+                    stimuli: trial_stimuli
+                }, 
+                step: step,
+                difference: diff
+            };
+            done(new_trial);
+        }
+
+
+        var options = {
+            initial_step_size: 2,
+            starting_difference: 10,
+            step_size_modifier: 1/2,
+            down_up: [1, 1], // 2-down, 1-up => 70.7%
+            terminate_on_nturns: 8,
+            terminate_on_ntrials: 50,
+            terminate_on_max_difference: 25,
+            threshold_on_last_nturns: 6,
+            change_step_size_on_difference: 1,
+            change_step_size_on_ntrials: 4,
+            intervals: ['1', '2', '3'],
+            prepare_trial: prepare_trial,
+            after_the_run: send_nAFC_data,
+            start_button: 'Start',
+            prompt: "Bu üç sesten hangisi diğerinden farklı?",
+            opening_message: "<h1>Test</h1><p>Üç ayrı ses duyacaksınız. Diğer ikisinden farklı olanı seçiniz.</p>",
+            closing_message: "<h1>Teşekkürler!</h1><p>",
+            isi: 250,
+            visual_feedback: true,
+        };
+
+        var main_timeline = [];
+    
+        
+        var conditions = [0, 1, 2];
+
+        for(c of conditions)
+        {
+            main_timeline.push(nAFC_adapt(options, c));
+        }
+            console.log(main_timeline)
+
+        jsPsych.init({
+        timeline: main_timeline,
+        show_progress_bar: false,
+        auto_update_progress_bar: false,
+        on_finish: function(data) {
+            var corrects = data.select('threshold').mean();
+            var srd = (corrects * 1.414)
+            console.log ('<p>Spektral dalga ayırt etme beceriniz ' + srd + ' SRD.</p>');
+        }
+    });
+    </script>
+    </body>
+</html>

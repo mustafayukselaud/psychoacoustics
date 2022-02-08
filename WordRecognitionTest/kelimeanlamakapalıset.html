@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kelime Anlama Testi - Yetişkin</title>
+    <script src="jspsych-6.3.1/jspsych.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>   
+    <script src="jspsych-6.3.1/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-audio-button-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-preload.js"></script>
+    <link href="jspsych-6.3.1/css/jspsych.css" rel="stylesheet" type="text/css">
+  </head>
+  <body></body>
+  <script>
+
+  //başlangıç için boş timeline
+  var timeline = []
+
+  //medya dosyaları için önyükleme
+  var preload = {
+    type: 'preload',
+    auto_preload: true
+    };
+
+  //karşılama ekranı
+  var wellcome = {
+    type: 'html-keyboard-response',
+    stimulus: '<p> <b>Gürültüde Kelime Anlama</b> testine hoşgeldiniz.<p> <p> Bu test ile sessiz ortamda veya bir arka plan gürültüsü varlığında tek heceli kelimeleri doğru bir şekilde anlama becerisi ölçülecektir. \n'+
+    '<p>Her bir kelimeden önce <b>Şimdi Duyacağınız Kelime</b> ifadesini duyacaksınız.\n'+
+    '<p>Söz konusu ifadeden sonra hedef kelimeyi duyacaksınız.\n'+
+    '<p>Her bir kelimeden sonra karşınıza 4 seçenek çıkacak ve duyduğunuz kelimenin bulunduğu düğmeye tıklayacaksınız. \n'+
+    '<p>Toplamda <b>25 kelime</b> dinleyeceksiniz. \n'+ 
+    '<p>Test sonunda doğru bilinen kelime sayısı yüzde cinsinden ekranda gösterilmektedir.\n'+
+    '<p>Ses seviyesi ayarlama ve alıştırma ile devam etmek için klavyenizde herhangi bir tuşa basın.<p>'
+  };
+
+  var sound_level = {
+    timeline: [{
+      type: 'audio-button-response',
+      stimulus: 'audio/practice/sesseviye15.wav',
+      choices: ['TEKRAR DİNLE', 'DEVAM'],
+      prompt: '<p>Lüfen cihazınızın ses seviyesini bu konuşmayı rahat bir şekilde duyabileceğiniz şekilde ayarlayın. \n'+
+        '<p><b>TEKRAR DİNLE</b> tuşuna basarak ses örneğini istediğiniz kadar dinleyebilirsiniz. Kendinizi hazır hissedince <b>DEVAM</b> tuşuna basın'
+    }],
+    loop_function: function(data){
+        if(jsPsych.pluginAPI.compareKeys(data.values()[0].response, 0)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+  //alıştırma örnekleri
+  var practice1 = {
+      timeline: [
+        {
+          type: 'html-button-response',
+          choices: ['DEVAM'],
+          stimulus: 'Arka plan gürültüsü ile en kolay koşul <b>+20 dB SNR</b> koşuludur.\n'+
+          '<p>Örneği dinlemek için <b>DEVAM</b> düğmesine basınız.',
+          button_html: '<button style="height:100px; width:100px; font-size:20px">%choice%</button>'
+        }, 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime",
+          choices: jsPsych.NO_KEYS,
+          stimulus: 'audio/sabit.wav',
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: '<b>Lütfen Dikkatle Dinleyiniz</b>',
+          choices: jsPsych.NO_KEYS,
+          stimulus: 'audio/practice/Bul20dB.wav',
+          trial_duration: 1500,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin (Bu deneme için <b>BUL</b> kelimesine tıklayabilirsiniz)',
+          choices: ['BUT', 'TUZ', 'BUZ', 'BUL'],
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+        }
+      ],
+  };
+
+  var practice2 = {
+      timeline: [
+        {
+          type: 'html-button-response',
+          choices: ['DEVAM'],
+          stimulus: 'Arka plan gürültüsü ile en zorlayıcı koşul ise 0 dB SNR koşuludur.\n'+ 
+          '<p>Örneği dinlemek için <b>DEVAM</b> düğmesine basınız.',
+          button_html: '<button style="height:100px; width:100px; font-size:20px">%choice%</button>'
+        }, 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime",
+          choices: jsPsych.NO_KEYS,
+          stimulus: 'audio/sabit.wav',
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: '<b>Lütfen Dikkatle Dinleyiniz</b>',
+          choices: jsPsych.NO_KEYS,
+          stimulus: 'audio/practice/Gur0dB.wav',
+          trial_duration: 1500,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin (Bu deneme için <b>GÜR</b> kelimesine tıklayabilirsiniz)',
+          choices: ['GÜL', 'YÜN', 'GÜR', 'GÜN'],
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+        }
+      ],
+  };
+
+  //grup seçimi
+  var snr = {
+      type: 'html-button-response',
+      choices: ["0 dB", "+5 dB", "+10 dB", "+15 dB", "+20 dB", "Gürültüsüz"],
+      button_html: '<button style="height:100px; width:100px; font-size:18px">%choice%</button>',
+      stimulus: 'Asıl teste başlayabilirsiniz.\n'+
+      '<p>Lütfen Testi Gerçekleştirmek İstediğiniz Koşulu (SNR) Seçiniz',
+      data: {
+		    question_id: 'choice'
+	    },
+      on_start: function() {
+          jsPsych.setProgressBar(0);
+      } 
+  };
+
+  //testler
+  var quiet = {
+      timeline: [ 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime:",
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip1'),
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: 'Lütfen Dikkatle Dinleyiniz',
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip2'),
+          trial_duration: 1500,
+          response_allowed_while_playing: false,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin',
+          choices: jsPsych.timelineVariable('text'),
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+          data: {
+            task: 'response',
+            correct_response: jsPsych.timelineVariable('correct_response')
+          },
+          on_finish: function(data){
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+            jsPsych.setProgressBar(curr_progress_bar_value + (1/25));
+          }
+        }
+      ],         
+      timeline_variables: [
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Bak.wav', text: ['BAK', 'TAK', 'HAK', 'BAL'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Bal.wav', text: ['BAS', 'KAL', 'BAR', 'BAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Bel.wav', text: ['GEL', 'BEL', 'KEL', 'BEN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Buz.wav', text: ['BUT', 'TUZ', 'BUZ', 'BUL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Cep.wav', text: ['KEP', 'CEP', 'HEP', 'CET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Çam.wav', text: ['ÇAM', 'CAM', 'TAM', 'ÇAY'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Dağ.wav', text: ['YAĞ', 'SAĞ', 'DAR', 'DAĞ'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Dik.wav', text: ['TİK', 'DİN', 'DİK', 'PİK'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Düş.wav', text: ['DÜN', 'DÜŞ', 'SÜN', 'DÜR'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Giy.wav', text: ['GİY', 'GİR', 'ÇİY', 'GİT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Gün.wav', text: ['GÜL', 'YÜN', 'GÜR', 'GÜN'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Hat.wav', text: ['HAT', 'TAT', 'HAN', 'KAT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/His.wav', text: ['HİÇ', 'PİS', 'HİS', 'HİN'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Kas.wav', text: ['KAN', 'TAS', 'KAS', 'KAR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Kır.wav', text: ['KIR', 'KIL', 'KIN', 'SIR'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Kum.wav', text: ['KUR', 'KUM', 'KUL', 'MUM'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Mal.wav', text: ['FAL', 'KAL', 'MAT', 'MAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Rey.wav', text: ['REN', 'REY', 'ŞEY', 'RET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Set.wav', text: ['KET', 'SET', 'SEL', 'SEN'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Sor.wav', text: ['SOL', 'SON', 'SOR', 'KOR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Tan.wav', text: ['TAN', 'YAN', 'TAM', 'FAN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Ver.wav', text: ['HER', 'YER', 'TER', 'VER'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Yer.wav', text: ['TER', 'VER', 'YER', 'YEL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Yön.wav', text: ['YÖN', 'FÖN', 'JÖN', 'DÖN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/quiet/Zor.wav', text: ['ZOR', 'KOR', 'ZOM', 'SOR'], correct_response: 0}
+      ],
+      randomize_order: true,
+      repetitions: 1,
+  };
+
+  var plus5_trials = {
+      timeline: [ 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime:",
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip1'),
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: 'Lütfen Dikkatle Dinleyiniz',
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip2'),
+          trial_duration: 1500,
+          response_allowed_while_playing: false,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin',
+          choices: jsPsych.timelineVariable('text'),
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+          data: {
+            task: 'response',
+            correct_response: jsPsych.timelineVariable('correct_response')
+          },
+          on_finish: function(data){
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+            jsPsych.setProgressBar(curr_progress_bar_value + (1/25));
+          }
+        }
+      ],           
+      timeline_variables: [
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Bak5.wav', text: ['BAK', 'TAK', 'HAK', 'BAL'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Bal5.wav', text: ['BAS', 'KAL', 'BAR', 'BAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Bel5.wav', text: ['GEL', 'BEL', 'KEL', 'BEN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Buz5.wav', text: ['BUT', 'TUZ', 'BUZ', 'BUL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Cep5.wav', text: ['KEP', 'CEP', 'HEP', 'CET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Çam5.wav', text: ['ÇAM', 'CAM', 'TAM', 'ÇAY'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Dağ5.wav', text: ['YAĞ', 'SAĞ', 'DAR', 'DAĞ'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Dik5.wav', text: ['TİK', 'DİN', 'DİK', 'PİK'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Düş5.wav', text: ['DÜN', 'DÜŞ', 'SÜN', 'DÜR'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Giy5.wav', text: ['GİY', 'GİR', 'ÇİY', 'GİT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Gün5.wav', text: ['GÜL', 'YÜN', 'GÜR', 'GÜN'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Hat5.wav', text: ['HAT', 'TAT', 'HAN', 'KAT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/His5.wav', text: ['HİÇ', 'PİS', 'HİS', 'HİN'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Kas5.wav', text: ['KAN', 'TAS', 'KAS', 'KAR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Kır5.wav', text: ['KIR', 'KIL', 'KIN', 'SIR'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Kum5.wav', text: ['KUR', 'KUM', 'KUL', 'MUM'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Mal5.wav', text: ['FAL', 'KAL', 'MAT', 'MAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Rey5.wav', text: ['REN', 'REY', 'ŞEY', 'RET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Set5.wav', text: ['KET', 'SET', 'SEL', 'SEN'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Sor5.wav', text: ['SOL', 'SON', 'SOR', 'KOR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Tan5.wav', text: ['TAN', 'YAN', 'TAM', 'FAN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Ver5.wav', text: ['HER', 'YER', 'TER', 'VER'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Yer5.wav', text: ['TER', 'VER', 'YER', 'YEL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Yön5.wav', text: ['YÖN', 'FÖN', 'JÖN', 'DÖN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR5/Zor5.wav', text: ['ZOR', 'KOR', 'ZOM', 'SOR'], correct_response: 0}
+      ],
+      randomize_order: true,
+      repetitions: 1,
+  };
+
+  var plus10_trials = {
+      timeline: [ 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime:",
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip1'),
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: 'Lütfen Dikkatle Dinleyiniz',
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip2'),
+          trial_duration: 1500,
+          response_allowed_while_playing: false,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin',
+          choices: jsPsych.timelineVariable('text'),
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+          data: {
+            task: 'response',
+            correct_response: jsPsych.timelineVariable('correct_response')
+          },
+          on_finish: function(data){
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+            jsPsych.setProgressBar(curr_progress_bar_value + (1/25));
+          }
+        }
+      ],          
+      timeline_variables: [
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Bak10.wav', text: ['BAK', 'TAK', 'HAK', 'BAL'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Bal10.wav', text: ['BAS', 'KAL', 'BAR', 'BAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Bel10.wav', text: ['GEL', 'BEL', 'KEL', 'BEN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Buz10.wav', text: ['BUT', 'TUZ', 'BUZ', 'BUL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Cep10.wav', text: ['KEP', 'CEP', 'HEP', 'CET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Çam10.wav', text: ['ÇAM', 'CAM', 'TAM', 'ÇAY'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Dağ10.wav', text: ['YAĞ', 'SAĞ', 'DAR', 'DAĞ'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Dik10.wav', text: ['TİK', 'DİN', 'DİK', 'PİK'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Düş10.wav', text: ['DÜN', 'DÜŞ', 'SÜN', 'DÜR'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Giy10.wav', text: ['GİY', 'GİR', 'ÇİY', 'GİT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Gün10.wav', text: ['GÜL', 'YÜN', 'GÜR', 'GÜN'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Hat10.wav', text: ['HAT', 'TAT', 'HAN', 'KAT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/His10.wav', text: ['HİÇ', 'PİS', 'HİS', 'HİN'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Kas10.wav', text: ['KAN', 'TAS', 'KAS', 'KAR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Kır10.wav', text: ['KIR', 'KIL', 'KIN', 'SIR'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Kum10.wav', text: ['KUR', 'KUM', 'KUL', 'MUM'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Mal10.wav', text: ['FAL', 'KAL', 'MAT', 'MAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Rey10.wav', text: ['REN', 'REY', 'ŞEY', 'RET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Set10.wav', text: ['KET', 'SET', 'SEL', 'SEN'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Sor10.wav', text: ['SOL', 'SON', 'SOR', 'KOR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Tan10.wav', text: ['TAN', 'YAN', 'TAM', 'FAN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Ver10.wav', text: ['HER', 'YER', 'TER', 'VER'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Yer10.wav', text: ['TER', 'VER', 'YER', 'YEL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Yön10.wav', text: ['YÖN', 'FÖN', 'JÖN', 'DÖN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR10/Zor10.wav', text: ['ZOR', 'KOR', 'ZOM', 'SOR'], correct_response: 0}
+      ],
+      randomize_order: true,
+      repetitions: 1,
+  };
+
+  var plus15_trials = {
+      timeline: [ 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime:",
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip1'),
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: 'Lütfen Dikkatle Dinleyiniz',
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip2'),
+          trial_duration: 1500,
+          response_allowed_while_playing: false,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin',
+          choices: jsPsych.timelineVariable('text'),
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+          data: {
+            task: 'response',
+            correct_response: jsPsych.timelineVariable('correct_response')
+          },
+          on_finish: function(data){
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+            jsPsych.setProgressBar(curr_progress_bar_value + (1/25));
+          }
+        }
+      ],          
+      timeline_variables: [
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Bak15.wav', text: ['BAK', 'TAK', 'HAK', 'BAL'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Bal15.wav', text: ['BAS', 'KAL', 'BAR', 'BAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Bel15.wav', text: ['GEL', 'BEL', 'KEL', 'BEN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Buz15.wav', text: ['BUT', 'TUZ', 'BUZ', 'BUL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Cep15.wav', text: ['KEP', 'CEP', 'HEP', 'CET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Çam15.wav', text: ['ÇAM', 'CAM', 'TAM', 'ÇAY'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Dağ15.wav', text: ['YAĞ', 'SAĞ', 'DAR', 'DAĞ'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Dik15.wav', text: ['TİK', 'DİN', 'DİK', 'PİK'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Düş15.wav', text: ['DÜN', 'DÜŞ', 'SÜN', 'DÜR'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Giy15.wav', text: ['GİY', 'GİR', 'ÇİY', 'GİT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Gün15.wav', text: ['GÜL', 'YÜN', 'GÜR', 'GÜN'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Hat15.wav', text: ['HAT', 'TAT', 'HAN', 'KAT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/His15.wav', text: ['HİÇ', 'PİS', 'HİS', 'HİN'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Kas15.wav', text: ['KAN', 'TAS', 'KAS', 'KAR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Kır15.wav', text: ['KIR', 'KIL', 'KIN', 'SIR'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Kum15.wav', text: ['KUR', 'KUM', 'KUL', 'MUM'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Mal15.wav', text: ['FAL', 'KAL', 'MAT', 'MAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Rey15.wav', text: ['REN', 'REY', 'ŞEY', 'RET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Set15.wav', text: ['KET', 'SET', 'SEL', 'SEN'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Sor15.wav', text: ['SOL', 'SON', 'SOR', 'KOR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Tan15.wav', text: ['TAN', 'YAN', 'TAM', 'FAN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Ver15.wav', text: ['HER', 'YER', 'TER', 'VER'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Yer15.wav', text: ['TER', 'VER', 'YER', 'YEL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Yön15.wav', text: ['YÖN', 'FÖN', 'JÖN', 'DÖN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR15/Zor15.wav', text: ['ZOR', 'KOR', 'ZOM', 'SOR'], correct_response: 0}
+      ],
+      randomize_order: true,
+      repetitions: 1,
+  };
+
+  var plus20_trials = {
+      timeline: [ 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime:",
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip1'),
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: 'Lütfen Dikkatle Dinleyiniz',
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip2'),
+          trial_duration: 1500,
+          response_allowed_while_playing: false,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin',
+          choices: jsPsych.timelineVariable('text'),
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+          data: {
+            task: 'response',
+            correct_response: jsPsych.timelineVariable('correct_response')
+          },
+          on_finish: function(data){
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+            jsPsych.setProgressBar(curr_progress_bar_value + (1/25));
+          }
+        }
+      ],           
+      timeline_variables: [
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Bak20.wav', text: ['BAK', 'TAK', 'HAK', 'BAL'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Bal20.wav', text: ['BAS', 'KAL', 'BAR', 'BAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Bel20.wav', text: ['GEL', 'BEL', 'KEL', 'BEN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Buz20.wav', text: ['BUT', 'TUZ', 'BUZ', 'BUL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Cep20.wav', text: ['KEP', 'CEP', 'HEP', 'CET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Çam20.wav', text: ['ÇAM', 'CAM', 'TAM', 'ÇAY'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Dağ20.wav', text: ['YAĞ', 'SAĞ', 'DAR', 'DAĞ'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Dik20.wav', text: ['TİK', 'DİN', 'DİK', 'PİK'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Düş20.wav', text: ['DÜN', 'DÜŞ', 'SÜN', 'DÜR'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Giy20.wav', text: ['GİY', 'GİR', 'ÇİY', 'GİT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Gün20.wav', text: ['GÜL', 'YÜN', 'GÜR', 'GÜN'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Hat20.wav', text: ['HAT', 'TAT', 'HAN', 'KAT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/His20.wav', text: ['HİÇ', 'PİS', 'HİS', 'HİN'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Kas20.wav', text: ['KAN', 'TAS', 'KAS', 'KAR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Kır20.wav', text: ['KIR', 'KIL', 'KIN', 'SIR'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Kum20.wav', text: ['KUR', 'KUM', 'KUL', 'MUM'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Mal20.wav', text: ['FAL', 'KAL', 'MAT', 'MAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Rey20.wav', text: ['REN', 'REY', 'ŞEY', 'RET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Set20.wav', text: ['KET', 'SET', 'SEL', 'SEN'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Sor20.wav', text: ['SOL', 'SON', 'SOR', 'KOR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Tan20.wav', text: ['TAN', 'YAN', 'TAM', 'FAN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Ver20.wav', text: ['HER', 'YER', 'TER', 'VER'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Yer20.wav', text: ['TER', 'VER', 'YER', 'YEL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Yön20.wav', text: ['YÖN', 'FÖN', 'JÖN', 'DÖN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR20/Zor20.wav', text: ['ZOR', 'KOR', 'ZOM', 'SOR'], correct_response: 0}
+      ],
+      randomize_order: true,
+      repetitions: 1,
+  };
+
+  var zero_trials = {
+      timeline: [ 
+        {
+          type: 'audio-keyboard-response',
+          prompt: "<p>Şimdi Duyacağınız Kelime:",
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip1'),
+          trial_duration: 2500,
+          data: {
+            task: 'fixation'
+          }
+        },
+        {
+          type: 'audio-keyboard-response',
+          prompt: 'Lütfen Dikkatle Dinleyiniz',
+          choices: jsPsych.NO_KEYS,
+          stimulus: jsPsych.timelineVariable('clip2'),
+          trial_duration: 1500,
+          response_allowed_while_playing: false,
+          data: {
+            task: 'fixation'
+          }
+        }, 
+        {
+          type: 'html-button-response',
+          stimulus: 'Lütfen Duyduğunuz Kelimeyi Seçin',
+          choices: jsPsych.timelineVariable('text'),
+          button_html: '<button style="height:100px; width:100px; font-size:20px; border: 2px solid #4CAF50;">%choice%</button>',
+          data: {
+            task: 'response',
+            correct_response: jsPsych.timelineVariable('correct_response')
+          },
+          on_finish: function(data){
+            data.correct = jsPsych.pluginAPI.compareKeys(data.response, data.correct_response);
+            var curr_progress_bar_value = jsPsych.getProgressBarCompleted();
+            jsPsych.setProgressBar(curr_progress_bar_value + (1/25));
+          }
+        }
+      ],            
+      timeline_variables: [
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Bak0.wav', text: ['BAK', 'TAK', 'HAK', 'BAL'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Bal0.wav', text: ['BAS', 'KAL', 'BAR', 'BAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Bel0.wav', text: ['GEL', 'BEL', 'KEL', 'BEN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Buz0.wav', text: ['BUT', 'TUZ', 'BUZ', 'BUL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Cep0.wav', text: ['KEP', 'CEP', 'HEP', 'CET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Çam0.wav', text: ['ÇAM', 'CAM', 'TAM', 'ÇAY'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Dağ0.wav', text: ['YAĞ', 'SAĞ', 'DAR', 'DAĞ'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Dik0.wav', text: ['TİK', 'DİN', 'DİK', 'PİK'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Düş0.wav', text: ['DÜN', 'DÜŞ', 'SÜN', 'DÜR'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Giy0.wav', text: ['GİY', 'GİR', 'ÇİY', 'GİT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Gün0.wav', text: ['GÜL', 'YÜN', 'GÜR', 'GÜN'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Hat0.wav', text: ['HAT', 'TAT', 'HAN', 'KAT'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/His0.wav', text: ['HİÇ', 'PİS', 'HİS', 'HİN'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Kas0.wav', text: ['KAN', 'TAS', 'KAS', 'KAR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Kır0.wav', text: ['KIR', 'KIL', 'KIN', 'SIR'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Kum0.wav', text: ['KUR', 'KUM', 'KUL', 'MUM'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Mal0.wav', text: ['FAL', 'KAL', 'MAT', 'MAL'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Rey0.wav', text: ['REN', 'REY', 'ŞEY', 'RET'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Set0.wav', text: ['KET', 'SET', 'SEL', 'SEN'], correct_response: 1},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Sor0.wav', text: ['SOL', 'SON', 'SOR', 'KOR'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Tan0.wav', text: ['TAN', 'YAN', 'TAM', 'FAN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Ver0.wav', text: ['HER', 'YER', 'TER', 'VER'], correct_response: 3},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Yer0.wav', text: ['TER', 'VER', 'YER', 'YEL'], correct_response: 2},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Yön0.wav', text: ['YÖN', 'FÖN', 'JÖN', 'DÖN'], correct_response: 0},
+        {clip1: 'audio/sabit.wav', clip2: 'audio/SNR0/Zor0.wav', text: ['ZOR', 'KOR', 'ZOM', 'SOR'], correct_response: 0}
+      ],
+      randomize_order: true,
+      repetitions: 1,
+  };
+
+  //seçime uygun testi çalıştırıyor
+var quiet_if_node = {
+    timeline: [quiet],
+    conditional_function: function(){
+        var data = jsPsych.data.get().filter({question_id: 'choice'}).values()[0];
+        if(jsPsych.pluginAPI.compareKeys(data.response, 5)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+var plus20_if_node = {
+    timeline: [plus20_trials],
+    conditional_function: function(){
+        var data = jsPsych.data.get().filter({question_id: 'choice'}).values()[0];
+        if(jsPsych.pluginAPI.compareKeys(data.response, 4)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+var plus15_if_node = {
+    timeline: [plus15_trials],
+    conditional_function: function(){
+        var data = jsPsych.data.get().filter({question_id: 'choice'}).values()[0];
+        if(jsPsych.pluginAPI.compareKeys(data.response, 3)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+var plus10_if_node = {
+    timeline: [plus10_trials],
+    conditional_function: function(){
+        var data = jsPsych.data.get().filter({question_id: 'choice'}).values()[0];
+        if(jsPsych.pluginAPI.compareKeys(data.response, 2)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+var plus5_if_node = {
+    timeline: [plus5_trials],
+    conditional_function: function(){
+        var data = jsPsych.data.get().filter({question_id: 'choice'}).values()[0];
+        if(jsPsych.pluginAPI.compareKeys(data.response, 1)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+var zero_if_node = {
+    timeline: [zero_trials],
+    conditional_function: function(){
+        var data = jsPsych.data.get().filter({question_id: 'choice'}).values()[0];
+        if(jsPsych.pluginAPI.compareKeys(data.response, 0)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+  //sonuçları gösteriyor
+var debrief_block = {
+    type: "html-keyboard-response",
+      stimulus: function() {
+        var trials = jsPsych.data.get().filter({task: 'response'});
+        var correct_trials = trials.filter({correct: true});
+        var accuracy = Math.round(correct_trials.count() / trials.count() * 100);
+        var rt = Math.round(correct_trials.select('rt').mean());
+        return `<p>Kelimelere %${accuracy} oranında doğru yanıt verdiniz.</p>
+          <p>Testi tamamlamak için herhangi bir tuşa basın. Teşekkürler!</p>`;
+      }
+};
+
+  //jspsych başlatıyor
+jsPsych.init({
+    timeline: [preload, wellcome, sound_level, practice1, practice2, snr, quiet_if_node, plus20_if_node, plus15_if_node, plus10_if_node, plus5_if_node, zero_if_node, debrief_block],
+    show_progress_bar: true,
+    auto_update_progress_bar: false,
+    message_progress_bar: 'İlerleme Miktarı',
+  });
+  </script>
+</html>

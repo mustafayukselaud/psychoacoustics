@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Perde Yönü Ayırt Etme Testi</title>
+    <script src="js/tools.js"></script>
+    <script src="jspsych-6.3.1/jspsych.js"></script>
+    <script src="jspsych-6.3.1/jspsych-nafc-adaptive.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-html-button-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-audio-button-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-html-keyboard-response.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-instructions.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-waitfor-function.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-audio-sequence-button-response.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="jspsych-6.3.1/plugins/jspsych-preload.js"></script>
+    <link href="jspsych-6.3.1/css/jspsych.css" rel="stylesheet" type="text/css">
+    <style>
+        .jspsych-audio-sequence-button-response button {
+            font-size:30pt;
+        }
+        .highlighted {
+            background-color: blue !important;
+        }
+    </style>
+  </head>
+  <body>
+  <script>
+    var timeline = []
+
+    var wellcome = {
+        type: 'html-button-response',
+        choices: ['BAŞLAT'],
+        stimulus: '<b>Perde Yönü Ayırt Etme</b> testine hoşgeldiniz.\n'+ 
+                '<p>Şimdiki testte bazı nota çiftleri duyacaksınız.\n'+
+                'Her bir çift için, sesi daha ince olanı seçin.\n'+
+                'Notaların ses seviyesi test boyunca değişecek.\n'+
+                'Ses seviyesi farkların önemsemeyin ve sesi daha ince olanı seçin.\n'+
+                '<p>Bir kaç deneme yapabilirsiniz, sonrasında test başlayacak.\n'+
+                '<p><b>BAŞLAT</b> düğmesine basarak alıştırmayı başlatabilirsiniz.'
+    };
+
+    var explanation1 = {
+        type: 'html-button-response',
+        choices: ['ÖRNEĞİ DİNLE'],
+        stimulus: 'Şimdi dinleyeceğiniz ses çiftinde ikinci ses daha ince olacak'
+    };
+    
+    var practice1 = {
+      type: 'audio-sequence-button-response',
+      prompt: `
+          <p>Bu örnekte ikinci ses daha <strong>İNCE</strong>.
+            `,
+      choices: ['1', '2'],
+      stimuli: ['audio/1.wav', 'audio/5.wav'],
+      trial_ends_after_audio: true,
+      button_html: '<button style="height:200px; width:200px; font-size:40px">%choice%</button>',
+      isi: 1000,
+    };
+
+    var explanation2 = {
+        type: 'html-button-response',
+        choices: ['ÖRNEĞİ DİNLE'],
+        stimulus: 'Şimdi dinleyeceğiniz ses çiftinde ise birinci ses daha ince olacak'
+    };  
+
+    var practice2 = {
+      type: 'audio-sequence-button-response',
+      prompt: `
+          <p>Bu örnekte ise birinci ses daha <strong>İNCE</strong>.
+            `,
+      choices: ['1', '2'],
+      stimuli: ['audio/4.wav', 'audio/1.wav'],
+      trial_ends_after_audio: true,
+      button_html: '<button style="height:200px; width:200px; font-size:40px">%choice%</button>',
+      isi: 1000,
+    };
+
+    function getRandomIntInclusive(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    var stimuli = [
+                    "audio/0.wav", 
+                    "audio/1.wav", 
+                    "audio/2.wav", 
+                    "audio/3.wav", 
+                    "audio/4.wav", 
+                    "audio/5.wav", 
+                    "audio/6.wav", 
+                    "audio/7.wav", 
+                    "audio/8.wav", 
+                    "audio/9.wav", 
+                    "audio/10.wav", 
+                    "audio/11.wav", 
+                    "audio/12.wav",
+                    "audio/13.wav",
+                    "audio/14.wav",
+                    "audio/15.wav"]
+
+    function show_error_nAFC(msg){
+        $('#jspsych-target').append("<div class='ui error message'>"+msg+"</div>");
+    }
+
+    function send_nAFC_data(options, condition, data, success_cb)
+    {
+        success_cb();
+    }
+
+    function prepare_trial(last_trial, step, options, condition, done){
+        console.log('We come in with this step: '+step);
+        var baseIndex = condition;
+        if (step != 0 & Math.abs(step) < 1)
+            step = Math.sign(step)*1;
+        var diff = options.current_difference + step;
+        if (diff <= 0 & step != 0){
+            var dummy_trial = {
+                internal_node_id: jsPsych.currentTimelineNodeID(),
+                trial_type: 'audio-sequence-button-response',
+                step: -1,
+                difference: 0,
+                button_pressed: "1", 
+                i_correct: 0,
+                dummy: true  
+            };
+            jsPsych.data.get().push(dummy_trial);
+            diff = 1;
+            step = 1;
+            options.current_difference = 0;
+            options.current_step = -1;
+        }
+        console.log (jsPsych.currentTimelineNodeID().split('-'));
+        var trial_stimuli = stimuli[diff + baseIndex];
+        var i_correct = jsPsych.randomization.sampleWithoutReplacement([0,1], 1)[0];
+        if(i_correct==0)
+            trial_stimuli = [trial_stimuli, stimuli[baseIndex]];
+        else 
+            trial_stimuli = [stimuli[baseIndex], trial_stimuli];
+
+        options.current_step = step;
+        var new_trial = {
+            stimuli: trial_stimuli,
+            i_correct: i_correct,
+            trial_definition: {
+                dim: diff,
+                condition: condition,
+                stimuli: trial_stimuli
+            }, 
+            step: step,
+            difference: diff
+        };
+
+        console.log('We leave with this step: '+step);
+        done(new_trial);
+    }
+
+    var options = {
+        initial_step_size: 2,
+        starting_difference: 11,
+        step_size_modifier: 1/2,
+        down_up: [1, 1],
+        terminate_on_nturns: 8,
+        terminate_on_ntrials: 120,
+        terminate_on_max_difference: 13,
+        threshold_on_last_nturns: 6,
+        change_step_size_on_difference: 1,
+        change_step_size_on_ntrials: 4,
+        intervals: ['1', '2'],
+        prepare_trial: prepare_trial,
+        after_the_run: send_nAFC_data,
+        start_button: 'BAŞLAT',
+        prompt: "Hangi ses daha ince?",
+        opening_message: "<h1>Test</h1><p>Başlat düğmesine basarak asıl teste başlayabilir / teste devam edebilirsiniz.</p>",
+        closing_message: null,
+        isi: 100,
+        visual_feedback: false,
+    };
+
+    var main_timeline = [];
+    
+    var conditions = [0, 1, 2];
+
+    for(c of conditions)
+        {
+            main_timeline.push(nAFC_adapt(options, c));
+        }
+        console.log(main_timeline)
+    
+    
+    jsPsych.init({
+        timeline: main_timeline,
+        show_progress_bar: false,
+        auto_update_progress_bar: false,
+        on_finish: function(data) {
+            var corrects = data.select('threshold').mean();
+            console.log ('<p>Perde ayırt etme beceriniz ' + corrects + ' yarım ton.</p>');
+        }
+    });
+  </script>
+  </body>
+</html>
